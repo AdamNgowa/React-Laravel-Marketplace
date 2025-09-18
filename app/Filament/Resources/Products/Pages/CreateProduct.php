@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Products\Pages;
 use App\Filament\Resources\Products\ProductResource;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Container\Attributes\Auth;
+
 
 class CreateProduct extends CreateRecord
 {

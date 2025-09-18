@@ -6,6 +6,7 @@ use App\ProductStatusEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -16,6 +17,10 @@ class ProductsTable
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('images')
+                 ->collection('images')
+                 ->limit(1)
+                 ->conversion('thumb'),                
                 TextColumn::make('title')
                 ->sortable()
                 ->words(10)
