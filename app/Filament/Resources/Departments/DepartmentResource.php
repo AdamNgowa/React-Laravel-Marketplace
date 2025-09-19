@@ -9,7 +9,7 @@ use App\Filament\Resources\Departments\RelationManagers\CategoriesRelationManage
 use App\Filament\Resources\Departments\Schemas\DepartmentForm;
 use App\Filament\Resources\Departments\Tables\DepartmentsTable;
 use App\Models\Department;
-use App\RolesEnum;
+use App\Enums\RolesEnum;
 use BackedEnum;
 use Filament\Facades\Filament;
 

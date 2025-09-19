@@ -8,7 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
-use App\ProductStatusEnum;
+use App\Enums\ProductStatusEnum;
 
 class ProductForm
 {

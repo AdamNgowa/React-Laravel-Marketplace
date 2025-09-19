@@ -45,6 +45,6 @@ class ProductImages extends EditRecord
 
     public static function getNavigationLabel(): string
     {
-        return 'Images';
+        return 'Product Images';
     }
 }

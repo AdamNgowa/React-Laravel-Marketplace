@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
-use App\ProductStatusEnum;
+use App\Enums\ProductStatusEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
