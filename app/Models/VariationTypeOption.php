@@ -12,7 +12,7 @@ class VariationTypeOption extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    
+    public $timestamps = false;
 
     /**
      * Each option belongs to a variation type.

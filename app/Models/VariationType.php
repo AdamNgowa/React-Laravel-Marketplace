@@ -8,11 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VariationType extends Model
 {
-    
+    public $timestamps = false;
 
-    /**
-     * Each variation type belongs to a product.
-     */
+    
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
