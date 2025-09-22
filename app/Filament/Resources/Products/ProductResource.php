@@ -20,6 +20,7 @@ use App\Enums\RolesEnum;
 use App\Filament\Resources\Products\Pages\ProductVariations;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductResource extends Resource
 {
@@ -28,6 +29,11 @@ class ProductResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-queue-list';
 
     protected static null|SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->forVendor();
+    }
 
     public static function form(Schema $schema): Schema
     {
