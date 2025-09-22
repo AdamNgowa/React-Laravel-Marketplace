@@ -16,6 +16,7 @@ use Filament\Schemas\Schema;
 class ProductVariationTypes extends EditRecord
 {
     protected static string $resource = ProductResource::class;
+    protected static string|null $title = 'Variation Types';
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-numbered-list';
 

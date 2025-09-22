@@ -17,6 +17,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use App\Enums\RolesEnum;
+use App\Filament\Resources\Products\Pages\ProductVariations;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 
@@ -52,7 +53,9 @@ class ProductResource extends Resource
             'create' => CreateProduct::route('/create'),
             'edit' => EditProduct::route('/{record}/edit'),
             'images' => ProductImages::route('/{record}/images'),
-            'variation-types' => ProductVariationTypes::route('/{record}/variation-types')
+            'variation-types' => ProductVariationTypes::route('/{record}/variation-types'),
+            'variations' => ProductVariations::route('/{record}/variations'),
+            
         ];
     }
 
@@ -61,7 +64,8 @@ class ProductResource extends Resource
         return $page->generateNavigationItems([
             EditProduct::class,
             ProductImages::class,
-            ProductVariationTypes::class
+            ProductVariationTypes::class,
+            ProductVariations::class
         ]);
     }
 
