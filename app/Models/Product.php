@@ -49,7 +49,7 @@ class Product extends Model implements HasMedia
 
     public function scopeForVendor(Builder $query) : Builder
     {
-        return $query->where('created_by',auth()->id);
+        return $query->where('created_by',auth()->user()->id);
     }
 
     public function scopePublished(Builder $query) : Builder
@@ -72,6 +72,12 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class,'created_by');
+    }
+
+   
     public function variationTypes(): HasMany 
     {
         return $this->hasMany(VariationType::class);
