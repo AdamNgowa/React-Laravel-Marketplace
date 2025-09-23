@@ -1,6 +1,7 @@
 import { Product } from "@/types";
 import { Link } from "@inertiajs/react";
 import React from "react";
+import CurrencyFormatter from "../Core/CurrencyFormatter";
 function ProductItem({ product }: { product: Product }) {
   return (
     <div className="card bg-base-100 shadow-xl">
@@ -28,7 +29,10 @@ function ProductItem({ product }: { product: Product }) {
         <div className="card-actions justify-between items-center mt-4">
           {" "}
           <button className="btn btn-primary">Add To Cart</button>{" "}
-          <span className="text-2xl">{product.price}</span>
+          <span className="text-2xl">
+            {" "}
+            <CurrencyFormatter amount={product.price} />{" "}
+          </span>
         </div>
       </div>
     </div>
