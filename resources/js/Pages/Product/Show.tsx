@@ -122,8 +122,8 @@ function Show({
     return product.variationTypes.map((type, i) => (
       <div key={type.id}>
         <b>{type.name}</b>
-        {type.type === "image" && (
-          <div className="flex gap-2 mb-4">
+        {type.type === "Image" && (
+          <div className="flex gap-2 mb-4 w-96">
             {type.options.map((option) => (
               <div
                 onClick={() => chooseOption(type.id, option)}
@@ -134,10 +134,10 @@ function Show({
                     src={option.images[0].url}
                     alt=""
                     className={
-                      "w-[50px]" +
+                      "p-1 rounded cursor-pointer transition" +
                       (selectedOptions[type.id]?.id === option.id
-                        ? "outline outline-4 outline-primary"
-                        : "")
+                        ? "bg-primary/10 ring-4 ring-primary"
+                        : "ring-1 ring-gray-200")
                     }
                   />
                 )}
@@ -145,19 +145,23 @@ function Show({
             ))}
           </div>
         )}
-        {type.type === "radio" && (
-          <div className="flex join mb-4">
+        {type.type === "Radio" && (
+          <div className="flex gap-3 mb-4">
             {type.options.map((option) => (
-              <input
-                onChange={() => chooseOption(type.id, option)}
+              <label
                 key={option.id}
-                className="join-item btn"
-                type="radio"
-                value={option.id}
-                checked={selectedOptions[type.id]?.id === option.id}
-                name={"variation_type_" + type.id}
-                aria-label={option.name}
-              />
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  onChange={() => chooseOption(type.id, option)}
+                  type="radio"
+                  value={option.id}
+                  checked={selectedOptions[type.id]?.id === option.id}
+                  name={"variation_type_" + type.id}
+                  className="radio radio-primary"
+                />
+                <span className="px-2">{option.name}</span>
+              </label>
             ))}
           </div>
         )}

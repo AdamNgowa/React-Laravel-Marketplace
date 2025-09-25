@@ -1,31 +1,35 @@
 import { Image } from "@/types";
+import { useEffect, useState } from "react";
 
 function Carousel({ images }: { images: Image[] }) {
+  const [selectedImage, setSelectedImage] = useState<Image>(images[0]);
+  useEffect(() => {
+    setSelectedImage(images[0]);
+  }, images);
   return (
     <>
       <div className="flex items-start gap-8">
         <div className="flex flex-col items-center gap-2 py-2">
           {images.map((image, i) => (
-            <a
-              href={"#item" + i}
-              className="border-2 hover:border-blue-500"
+            <button
+              onClick={(ev) => setSelectedImage(image)}
+              className={
+                "border-2 " +
+                (selectedImage.id == image.id
+                  ? "border-blue-500"
+                  : "hover:border-blue-500")
+              }
               key={image.id}
             >
               {" "}
               <img src={image.url} alt="" className="w-[50px]" />{" "}
-            </a>
+            </button>
           ))}
         </div>
         <div className="carousel w-3/4">
-          {images.map((image, i) => (
-            <div
-              id={"item" + i}
-              className="carousel-item w-full"
-              key={image.id}
-            >
-              <img src={image.url} alt="" className="w-full" />
-            </div>
-          ))}
+          <div className="carousel-item w-full">
+            <img src={selectedImage.url} alt="" className="w-full" />
+          </div>
         </div>
       </div>
     </>
