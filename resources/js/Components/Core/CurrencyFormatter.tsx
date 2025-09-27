@@ -1,6 +1,6 @@
 import React from "react";
 
-function currencyFormatter({
+function CurrencyFormatter({
   amount,
   currency = "USD",
   locale,
@@ -14,4 +14,4 @@ function currencyFormatter({
   );
 }
 
-export default currencyFormatter;
+export default CurrencyFormatter;

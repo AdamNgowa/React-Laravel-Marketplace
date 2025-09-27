@@ -49,4 +49,6 @@ class VariationTypeOption extends Model implements HasMedia
             ->width(1200)
             ->keepOriginalImageFormat();
     }
+
+     
 }

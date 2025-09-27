@@ -1,6 +1,6 @@
 import { Product } from "@/types";
 import { Link } from "@inertiajs/react";
-import React from "react";
+
 import CurrencyFormatter from "../Core/CurrencyFormatter";
 function ProductItem({ product }: { product: Product }) {
   return (

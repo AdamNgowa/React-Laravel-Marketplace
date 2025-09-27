@@ -56,6 +56,11 @@ class Product extends Model implements HasMedia
     {
         return $query->where('status',ProductStatusEnum::Published);
     }
+
+    public function scopeForWebsite(Builder $query) : Builder
+    {
+        return $query->published();
+    }
     /**
      * Product belongs to a department.
      */
@@ -87,5 +92,18 @@ class Product extends Model implements HasMedia
     {
         return $this->hasMany(ProductVariation::class,'product_id');
         
+    }
+    public function getPriceForOptions($optionIds = []) 
+    {
+       $optionIds = array_values($optionIds);
+       sort($optionIds);
+       foreach($this->variations as $variation) {
+            $a = $variation->variation_type_option_ids;
+            sort($a);
+            if($optionIds === $a) {
+                return $variation->price !== null ? $variation->price : $this->price;
+            }
+       }
+       return $this->price; 
     }
 }
