@@ -1,9 +1,11 @@
 import { Link, usePage } from "@inertiajs/react";
 import CurrencyFormatter from "../Core/CurrencyFormatter";
 import { PageProps } from "@/types";
+import { productRoute } from "@/helpers";
 
 function MiniCartDropdown() {
-  const { totalPrice, totalQuantity, cartItems } = usePage<PageProps>().props;
+  const { totalPrice, totalQuantity, miniCartItems } =
+    usePage<PageProps>().props;
 
   return (
     <div className="dropdown dropdown-end">
@@ -39,40 +41,39 @@ function MiniCartDropdown() {
       {/* Dropdown content */}
       <div
         tabIndex={0}
-        className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-[480px] shadow"
+        className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-[90vw] sm:w-[420px] md:w-[480px] shadow"
       >
         <div className="card-body">
+          {/* Items List */}
           <div className="my-2 max-h-[300px] overflow-auto">
-            {cartItems.length === 0 && (
-              <div className="py-4 text-gray-500 text-center">
+            {miniCartItems.length === 0 && (
+              <div className="py-4 text-gray-500 text-center text-sm sm:text-base">
                 You don&apos;t have any items yet
               </div>
             )}
 
-            {cartItems.map((item) => (
+            {miniCartItems.map((item) => (
               <div
                 key={item.id}
-                className="flex gap-4 p-3 border-b last:border-0"
+                className="flex gap-3 sm:gap-4 p-2 sm:p-3 border-b last:border-0"
               >
                 <Link
-                  href={route("product.show", item.slug)}
-                  className="w-16 h-16 flex justify-center"
+                  href={productRoute(item)}
+                  className="w-14 h-14 sm:w-16 sm:h-16 flex justify-center"
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="h-16 w-16 object-cover rounded"
+                    className="h-full w-full object-cover rounded"
                   />
                 </Link>
-                <div className="flex-1">
-                  <h3 className="mb-2 font-semibold text-sm">
-                    <Link href={route("product.show", item.slug)}>
-                      {item.title}
-                    </Link>
+                <div className="flex-1 min-w-0">
+                  <h3 className="mb-1 font-semibold text-xs sm:text-sm truncate">
+                    <Link href={productRoute(item)}>{item.title}</Link>
                   </h3>
-                  <div className="flex text-sm justify-between">
-                    <div>{item.quantity}</div>
-                    <div>
+                  <div className="flex text-xs sm:text-sm justify-between">
+                    <div>x{item.quantity}</div>
+                    <div className="font-medium">
                       <CurrencyFormatter amount={item.quantity * item.price} />
                     </div>
                   </div>
@@ -83,14 +84,16 @@ function MiniCartDropdown() {
 
           {/* Summary & actions */}
           <div className="mt-2 border-t pt-2">
-            <span className="text-lg font-bold">{totalQuantity} items</span>
-            <span className="text-info block">
+            <span className="text-sm sm:text-base font-bold">
+              {totalQuantity} items
+            </span>
+            <span className="text-info block text-sm sm:text-base font-medium">
               <CurrencyFormatter amount={totalPrice} />
             </span>
             <div className="card-actions mt-2">
               <Link
                 href={route("cart.index")}
-                className="btn btn-primary btn-block"
+                className="btn btn-primary btn-sm sm:btn-md btn-block"
               >
                 View cart
               </Link>

@@ -5,7 +5,7 @@ function Carousel({ images }: { images: Image[] }) {
   const [selectedImage, setSelectedImage] = useState<Image>(images[0]);
   useEffect(() => {
     setSelectedImage(images[0]);
-  }, images);
+  }, [images]);
   return (
     <>
       <div className="flex items-start gap-8">

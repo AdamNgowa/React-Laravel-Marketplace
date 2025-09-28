@@ -8,7 +8,6 @@ use App\Models\VariationType;
 use App\Models\VariationTypeOption;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -138,51 +137,107 @@ class CartService
     {
         $total = 0;
         foreach ($this->getCartItems() as $item) {
-            $total += $item['quantity'] * $item['price']; // multiply, not add
+            $total += $item['quantity'] * $item['price'];
         }
         return $total;
     }
 
-    // Database methods
+    /**
+     * Normalize option IDs for consistent comparison:
+     * - If $optionIds is an associative map (typeId => optionId), ksort keeps order consistent.
+     * - Return values only (array_values) so storage is an indexed array of option ids.
+     */
+    private function normalizeOptionIds(?array $optionIds): array
+    {
+        if (empty($optionIds)) {
+            return [];
+        }
+
+        // Keep keys order stable (useful when optionIds is typeId => optionId)
+        ksort($optionIds);
+        return array_values($optionIds);
+    }
+
+    // Database methods (PHP-level matching to avoid JSON query issues)
     protected function saveItemToDatabase(int $productId, int $quantity, float $price, array $optionIds): void
     {
-        ksort($optionIds);
+        $normalized = $this->normalizeOptionIds($optionIds);
         $userId = Auth::id();
 
-        $cartItem = CartItem::where('user_id', $userId)
+        // Find existing cart items for this user & product, then compare normalized option ids in PHP
+        $existingItems = CartItem::where('user_id', $userId)
             ->where('product_id', $productId)
-            ->where('variation_type_option_ids', $optionIds)
-            ->first();
+            ->get();
 
-        if ($cartItem) {
-            $cartItem->increment('quantity', $quantity);
-        } else {
-            CartItem::create([
-                'user_id' => $userId,
-                'product_id' => $productId,
-                'quantity' => $quantity,
-                'price' => $price,
-                'variation_type_option_ids' => $optionIds,
-            ]);
+        foreach ($existingItems as $existing) {
+            $existingOptionIds = $existing->variation_type_option_ids ?? [];
+            $existingNormalized = $this->normalizeOptionIds(is_array($existingOptionIds) ? $existingOptionIds : (array)$existingOptionIds);
+
+            if ($existingNormalized === $normalized) {
+                $existing->increment('quantity', $quantity);
+                $this->cachedCartItems = null;
+                return;
+            }
         }
+
+        // No match -> create new item (store normalized array, model will cast to JSON)
+        CartItem::create([
+            'user_id' => $userId,
+            'product_id' => $productId,
+            'quantity' => $quantity,
+            'price' => $price,
+            'variation_type_option_ids' => $normalized,
+        ]);
+
+        $this->cachedCartItems = null;
     }
 
     protected function updateItemQuantityInDatabase(int $productId, int $quantity, array $optionIds): void
     {
+        $normalized = $this->normalizeOptionIds($optionIds);
         $userId = Auth::id();
-        CartItem::where('user_id', $userId)
+
+        $existingItems = CartItem::where('user_id', $userId)
             ->where('product_id', $productId)
-            ->where('variation_type_option_ids', $optionIds)
-            ->update(['quantity' => $quantity]);
+            ->get();
+
+        foreach ($existingItems as $existing) {
+            $existingOptionIds = $existing->variation_type_option_ids ?? [];
+            $existingNormalized = $this->normalizeOptionIds(is_array($existingOptionIds) ? $existingOptionIds : (array)$existingOptionIds);
+
+            if ($existingNormalized === $normalized) {
+                $existing->update(['quantity' => $quantity]);
+                $this->cachedCartItems = null;
+                return;
+            }
+        }
+
+        // If no matching item found, do nothing (or optionally create)
+        $this->cachedCartItems = null;
     }
 
     protected function removeItemFromDatabase(int $productId, array $optionIds): void
     {
+        $normalized = $this->normalizeOptionIds($optionIds);
         $userId = Auth::id();
-        CartItem::where('user_id', $userId)
+
+        $existingItems = CartItem::where('user_id', $userId)
             ->where('product_id', $productId)
-            ->where('variation_type_option_ids', $optionIds)
-            ->delete();
+            ->get();
+
+        foreach ($existingItems as $existing) {
+            $existingOptionIds = $existing->variation_type_option_ids ?? [];
+            $existingNormalized = $this->normalizeOptionIds(is_array($existingOptionIds) ? $existingOptionIds : (array)$existingOptionIds);
+
+            if ($existingNormalized === $normalized) {
+                $existing->delete();
+                $this->cachedCartItems = null;
+                return;
+            }
+        }
+
+        // nothing matched; keep cache cleared anyway
+        $this->cachedCartItems = null;
     }
 
     // Cookie methods
@@ -190,7 +245,7 @@ class CartService
     {
         ksort($optionIds);
         $cartItems = $this->getCartItemsFromCookies();
-        $key = $productId . '_' . implode('-', $optionIds);
+        $key = $productId . '_' . implode('-', array_values($optionIds));
 
         if (isset($cartItems[$key])) {
             $cartItems[$key]['quantity'] += $quantity;
@@ -206,41 +261,49 @@ class CartService
         }
 
         Cookie::queue(self::COOKIE_NAME, json_encode($cartItems), self::COOKIE_LIFETIME);
+        $this->cachedCartItems = null;
     }
 
     protected function updateItemQuantityInCookies(int $productId, int $quantity, array $optionIds): void
     {
         ksort($optionIds);
         $cartItems = $this->getCartItemsFromCookies();
-        $key = $productId . '_' . implode('-', $optionIds);
+        $key = $productId . '_' . implode('-', array_values($optionIds));
 
         if (isset($cartItems[$key])) {
             $cartItems[$key]['quantity'] = $quantity;
         }
 
         Cookie::queue(self::COOKIE_NAME, json_encode($cartItems), self::COOKIE_LIFETIME);
+        $this->cachedCartItems = null;
     }
 
     protected function removeItemsFromCookies(int $productId, array $optionIds): void
     {
         ksort($optionIds);
         $cartItems = $this->getCartItemsFromCookies();
-        $key = $productId . '_' . implode('-', $optionIds);
+        $key = $productId . '_' . implode('-', array_values($optionIds));
 
         unset($cartItems[$key]);
         Cookie::queue(self::COOKIE_NAME, json_encode($cartItems), self::COOKIE_LIFETIME);
+        $this->cachedCartItems = null;
     }
 
     // Getters
     protected function getCartItemsFromDatabase(): array
     {
         return CartItem::where('user_id', Auth::id())->get()->map(function ($item) {
+            // Eloquent cast should already return array, but be defensive:
+            $optionIds = $item->variation_type_option_ids;
+            if (is_string($optionIds)) {
+                $optionIds = json_decode($optionIds, true) ?? [];
+            }
             return [
                 'id' => $item->id,
                 'product_id' => $item->product_id,
                 'quantity' => $item->quantity,
                 'price' => $item->price,
-                'option_ids' => $item->variation_type_option_ids,
+                'option_ids' => $optionIds,
             ];
         })->toArray();
     }
@@ -248,5 +311,20 @@ class CartService
     protected function getCartItemsFromCookies(): array
     {
         return json_decode(Cookie::get(self::COOKIE_NAME, '{}'), true) ?? [];
+    }
+
+    public function getCartItemsGrouped(): array
+    {
+        $cartItems = $this->getCartItems();
+
+        return collect($cartItems)
+            ->groupBy(fn($item) => $item['user']['id'])
+            ->map(fn($items, $userId) => [
+                'user' => $items->first()['user'],
+                'items' => $items->toArray(),
+                'totalQuantity' => $items->sum('quantity'),
+                'totalPrice' => $items->sum(fn($item) => $item['price'] * $item['quantity'])
+            ])
+            ->toArray();
     }
 }

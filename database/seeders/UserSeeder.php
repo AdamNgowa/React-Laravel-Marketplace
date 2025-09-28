@@ -38,6 +38,21 @@ class UserSeeder extends Seeder
             'store_address' => fake()->address(),
         ]);
 
+        // Vendor 2
+        $user = User::factory()->create([
+            'name' => 'Vendor 2',
+            'email' => 'vendor2@example.com',
+            'password' => Hash::make('12345678'),
+        ]);
+        $user->assignRole(RolesEnum::Vendor->value);
+
+        Vendor::factory()->create([
+            'user_id' => $user->id,
+            'status' => VendorStatusEnum::Approved,
+            'store_name' => 'Vendor 2 Store',
+            'store_address' => fake()->address(),
+        ]);
+
         // Admin
         User::factory()->create([
             'name' => 'Admin',
