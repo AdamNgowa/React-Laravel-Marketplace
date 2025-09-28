@@ -1,37 +1,42 @@
 import { Product } from "@/types";
 import { Link } from "@inertiajs/react";
-
 import CurrencyFormatter from "../Core/CurrencyFormatter";
+
 function ProductItem({ product }: { product: Product }) {
   return (
-    <div className="card bg-base-100 shadow-xl">
+    <div className="card bg-base-100 shadow-md hover:shadow-lg transition w-full mx-auto">
       <Link href={route("product.show", product.slug)}>
-        <figure>
+        <figure className="aspect-square overflow-hidden">
           <img
             src={product.image}
             alt={product.title}
-            className="aspect-square object-cover"
+            className="h-full w-full object-cover transform hover:scale-105 transition duration-300"
           />
         </figure>
       </Link>
-      <div className="card-body">
-        <h2 className="class-title">{product.title}</h2>
-        <p>
+
+      <div className="card-body p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold line-clamp-2">
+          {product.title}
+        </h2>
+
+        <p className="text-xs sm:text-sm text-gray-600 mt-1">
           by{" "}
-          <Link href="/" className="hover:underline">
+          <Link href="/" className="hover:underline font-medium">
             {product.user.name}
-          </Link>
-          &nbsp; in{" "}
-          <Link href="/" className="hover:underline">
+          </Link>{" "}
+          in{" "}
+          <Link href="/" className="hover:underline font-medium">
             {product.department.name}
           </Link>
         </p>
+
         <div className="card-actions justify-between items-center mt-4">
-          {" "}
-          <button className="btn btn-primary">Add To Cart</button>{" "}
-          <span className="text-2xl">
-            {" "}
-            <CurrencyFormatter amount={product.price} />{" "}
+          <button className="btn btn-primary btn-xs sm:btn-sm md:btn-md">
+            Add To Cart
+          </button>
+          <span className="text-lg sm:text-xl font-bold">
+            <CurrencyFormatter amount={product.price} />
           </span>
         </div>
       </div>
