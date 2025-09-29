@@ -3,6 +3,7 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StripeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,6 +24,9 @@ Route::controller(CartController::class)->group(function(){
 
 });
 
+Route::post('/stripe/webhook',[StripeController::class,'webhook'])
+->name('stripe.webhook');
+
 //Auth routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -32,6 +36,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['verified'])->group(function(){
         Route::post('/cart/checkout',[CartController::class,'checkout'])
         ->name('cart.checkout');
+
+        Route::get('/stripe/success',[StripeController::class,'success'])
+        ->name('stripe.success');
+        
+        Route::get('/stripe/failure',[StripeController::class,'failure'])
+        ->name('stripe.failure');
+        
     });
 });
 

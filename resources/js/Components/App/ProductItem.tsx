@@ -20,7 +20,7 @@ function ProductItem({ product }: { product: Product }) {
           {product.title}
         </h2>
 
-        <p className="text-xs sm:text-sm text-gray-600 mt-1">
+        <p className="text-xs sm:text-sm text-white mt-1">
           by{" "}
           <Link href="/" className="hover:underline font-medium">
             {product.user.name}
