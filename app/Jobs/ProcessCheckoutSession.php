@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Enums\OrderStatusEnum;
-use App\Mail\CheckoutCompleted;
 use App\Mail\NewOrderMail;
 use App\Models\CartItem;
 use App\Models\Order;
@@ -19,21 +18,23 @@ class ProcessCheckoutSession implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public array $session) {}
+    public array $session;
+
+    public function __construct(array $session)
+    {
+        $this->session = $session;
+    }
 
     public function handle(): void
     {
         $pi = $this->session['payment_intent'] ?? null;
 
-        $orders = Order::query()
-            ->with(['orderItems.product', 'vendorUser.vendor'])
-            ->where('stripe_session_id', $this->session['id'])
+        $orders = Order::with(['orderItems.product', 'vendorUser.vendor', 'user'])
+            ->where('stripe_session_id', $this->session['id'] ?? null)
             ->get();
 
         if ($orders->isEmpty()) {
-            Log::warning("⚠ No orders found for session", [
-                'session_id' => $this->session['id'],
-            ]);
+            Log::warning("No orders found for session", ['session_id' => $this->session['id'] ?? null]);
             return;
         }
 
@@ -42,13 +43,15 @@ class ProcessCheckoutSession implements ShouldQueue
 
         foreach ($orders as $order) {
             try {
+                // Mark order as paid
                 $order->payment_intent = $pi;
                 $order->status = OrderStatusEnum::Paid->value;
                 $order->save();
 
                 $userId = $order->user_id;
 
-                foreach ($order->orderItems as $orderItem) {
+                // Reduce stock
+                foreach ($order->orderItems ?? [] as $orderItem) {
                     $product = $orderItem->product;
                     $options = $orderItem->variation_type_option_ids;
 
@@ -60,11 +63,11 @@ class ProcessCheckoutSession implements ShouldQueue
                                 ->first();
 
                             if ($variation && $variation->quantity !== null) {
-                                $variation->quantity -= $orderItem->quantity;
+                                $variation->quantity -= $orderItem->quantity ?? 0;
                                 $variation->save();
                             }
                         } elseif ($product->quantity !== null) {
-                            $product->quantity -= $orderItem->quantity;
+                            $product->quantity -= $orderItem->quantity ?? 0;
                             $product->save();
                         }
                     }
@@ -72,13 +75,18 @@ class ProcessCheckoutSession implements ShouldQueue
                     $allProductsToDelete[] = $orderItem->product_id;
                 }
 
-                // vendor email (safe try/catch)
-                if ($order->vendorUser && $order->vendorUser->email) {
+                // Send vendor email
+                if (optional($order->vendorUser)->email) {
                     try {
                         Mail::to($order->vendorUser->email)
-                            ->queue(new NewOrderMail($order));
+                            ->queue(new NewOrderMail($order->id));
+
+                        Log::info("NewOrderMail queued successfully", [
+                            'order_id' => $order->id,
+                            'vendor_email' => $order->vendorUser->email,
+                        ]);
                     } catch (\Throwable $e) {
-                        Log::error(" Failed to send vendor mail", [
+                        Log::error("Failed to queue NewOrderMail", [
                             'order_id' => $order->id,
                             'error' => $e->getMessage(),
                         ]);
@@ -86,14 +94,14 @@ class ProcessCheckoutSession implements ShouldQueue
                 }
 
             } catch (\Throwable $e) {
-                Log::error(" Failed processing order", [
+                Log::error("Failed processing order", [
                     'order_id' => $order->id ?? null,
                     'error' => $e->getMessage(),
                 ]);
             }
         }
 
-        // cart cleanup (never skipped)
+        // Remove items from cart
         if ($userId && !empty($allProductsToDelete)) {
             try {
                 $deleted = CartItem::query()
@@ -102,7 +110,7 @@ class ProcessCheckoutSession implements ShouldQueue
                     ->where('saved_for_later', false)
                     ->delete();
 
-                Log::info(" Cart items deleted", [
+                Log::info("Cart items deleted", [
                     'user_id' => $userId,
                     'deleted_count' => $deleted,
                 ]);
@@ -114,17 +122,9 @@ class ProcessCheckoutSession implements ShouldQueue
             }
         }
 
-        // customer email (safe try/catch)
-        try {
-            if ($orders->count() > 0 && $orders[0]->user && $orders[0]->user->email) {
-                Mail::to($orders[0]->user->email)
-                    ->queue(new CheckoutCompleted($orders));
-            }
-        } catch (\Throwable $e) {
-            Log::error(" Failed to send customer mail", [
-                'session_id' => $this->session['id'],
-                'error' => $e->getMessage(),
-            ]);
-        }
+        Log::info("ProcessCheckoutSession completed for session", [
+            'session_id' => $this->session['id'] ?? null,
+            'orders' => $orders->pluck('id')->toArray(),
+        ]);
     }
 }

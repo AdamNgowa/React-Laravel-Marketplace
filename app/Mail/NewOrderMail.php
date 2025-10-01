@@ -14,38 +14,36 @@ class NewOrderMail extends Mailable
     use Queueable, SerializesModels;
 
     /**
-     * Create a new message instance.
+     * Only store the order ID, not the whole model.
      */
-    public function __construct(public Order $order)
-    {
-        //
-    }
+    public function __construct(public int $orderId) {}
 
     /**
-     * Get the message envelope.
+     * Define envelope (subject, etc.)
      */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Order Mail',
+            subject: 'New Order Received',
         );
     }
 
     /**
-     * Get the message content definition.
+     * Define email content and pass a fresh Order model.
      */
     public function content(): Content
     {
+        $order = Order::with(['orderItems.product', 'vendorUser.vendor'])
+            ->findOrFail($this->orderId);
+
         return new Content(
             view: 'mail.new_order',
+            with: [
+                'order' => $order,
+            ],
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

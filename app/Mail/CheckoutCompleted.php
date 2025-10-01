@@ -2,27 +2,29 @@
 
 namespace App\Mail;
 
+use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 
 class CheckoutCompleted extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public array $orderIds;
+
     /**
-     * Create a new message instance.
+     * Constructor: store order IDs safely.
      */
-    public function __construct(public Collection $orders)
+    public function __construct(array $orderIds)
     {
-        //
+        $this->orderIds = array_filter($orderIds, 'is_numeric'); // only valid numeric IDs
     }
 
     /**
-     * Get the message envelope.
+     * Email envelope (subject).
      */
     public function envelope(): Envelope
     {
@@ -32,19 +34,24 @@ class CheckoutCompleted extends Mailable
     }
 
     /**
-     * Get the message content definition.
+     * Email content: pass fresh orders to Blade view.
      */
     public function content(): Content
     {
+        $orders = Order::with(['orderItems.product', 'vendorUser.vendor'])
+            ->whereIn('id', $this->orderIds)
+            ->get();
+
         return new Content(
             view: 'mail.checkout_completed',
+            with: [
+                'orders' => $orders,
+            ]
         );
     }
 
     /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * No attachments.
      */
     public function attachments(): array
     {
