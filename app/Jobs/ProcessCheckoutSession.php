@@ -78,7 +78,7 @@ class ProcessCheckoutSession implements ShouldQueue
                         Mail::to($order->vendorUser->email)
                             ->queue(new NewOrderMail($order));
                     } catch (\Throwable $e) {
-                        Log::error("❌ Failed to send vendor mail", [
+                        Log::error(" Failed to send vendor mail", [
                             'order_id' => $order->id,
                             'error' => $e->getMessage(),
                         ]);
@@ -86,7 +86,7 @@ class ProcessCheckoutSession implements ShouldQueue
                 }
 
             } catch (\Throwable $e) {
-                Log::error("❌ Failed processing order", [
+                Log::error(" Failed processing order", [
                     'order_id' => $order->id ?? null,
                     'error' => $e->getMessage(),
                 ]);
@@ -102,12 +102,12 @@ class ProcessCheckoutSession implements ShouldQueue
                     ->where('saved_for_later', false)
                     ->delete();
 
-                Log::info("✅ Cart items deleted", [
+                Log::info(" Cart items deleted", [
                     'user_id' => $userId,
                     'deleted_count' => $deleted,
                 ]);
             } catch (\Throwable $e) {
-                Log::error("❌ Failed to delete cart items", [
+                Log::error("Failed to delete cart items", [
                     'user_id' => $userId,
                     'error' => $e->getMessage(),
                 ]);
@@ -121,7 +121,7 @@ class ProcessCheckoutSession implements ShouldQueue
                     ->queue(new CheckoutCompleted($orders));
             }
         } catch (\Throwable $e) {
-            Log::error("❌ Failed to send customer mail", [
+            Log::error(" Failed to send customer mail", [
                 'session_id' => $this->session['id'],
                 'error' => $e->getMessage(),
             ]);
