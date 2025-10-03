@@ -35,9 +35,14 @@ function ProductItem({ product }: { product: Product }) {
         </p>
 
         <div className="card-actions justify-between items-center mt-4">
-          <button className="btn btn-primary btn-xs sm:btn-sm md:btn-md">
-            Add To Cart
-          </button>
+          {/* Instead of posting directly, send user to product page */}
+          <Link
+            href={route("product.show", product.slug)}
+            className="btn btn-primary btn-xs sm:btn-sm md:btn-md"
+          >
+            Choose Options
+          </Link>
+
           <span className="text-lg sm:text-xl font-bold">
             <CurrencyFormatter amount={product.price} />
           </span>
