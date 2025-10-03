@@ -18,10 +18,12 @@ class Vendor extends Model
 
     protected $primaryKey = 'user_id';
 
-    public function scopeEligibleForPayout (Builder $query) : Builder
+    public function scopeEligibleForPayout(Builder $query): Builder
     {
-        return $query->where('status',VendorStatusEnum::Approved);
+    return $query->where('status', VendorStatusEnum::Approved)
+        ->whereHas('user', fn($q) => $q->where('stripe_account_active', true));
     }
+
 
     public function user() : BelongsTo
     {

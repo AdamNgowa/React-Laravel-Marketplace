@@ -11,6 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Stripe\Stripe;
 use Stripe\Account;
 use Stripe\AccountLink;
+use Stripe\Transfer;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -82,4 +83,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $link->url;
     }
+    public function transferToStripeAccount(int $amount, string $currency = 'usd'): \Stripe\Transfer
+{
+    Stripe::setApiKey(config('app.stripe_secret_key'));
+
+    return Transfer::create([
+        'amount'      => $amount,
+        'currency'    => $currency,
+        'destination' => $this->stripe_account_id,
+        'metadata'    => [
+            'user_id' => $this->id,
+        ],
+    ]);
+}
 }
