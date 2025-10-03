@@ -1,7 +1,7 @@
 import Carousel from "@/Components/Core/Carousel";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Product, VariationTypeOption } from "@/types";
-import { Head, router, useForm, usePage } from "@inertiajs/react";
+import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { useEffect, useMemo, useState } from "react";
 
 import CurrencyFormatter from "@/Components/Core/CurrencyFormatter";
@@ -216,6 +216,20 @@ function Show({
           <div className="lg:col-span-6 flex flex-col gap-6">
             {/* Title */}
             <h1 className="text-2xl font-bold">{product.title}</h1>
+
+            <p className="text-xs sm:text-sm text-white mt-1">
+              by{" "}
+              <Link
+                href={route("vendor.profile", product.user.store_name)}
+                className="hover:underline font-medium"
+              >
+                {product.user.name}
+              </Link>{" "}
+              in{" "}
+              <Link href="/" className="hover:underline font-medium">
+                {product.department.name}
+              </Link>
+            </p>
 
             {/* Price */}
             <div className="text-3xl font-semibold">

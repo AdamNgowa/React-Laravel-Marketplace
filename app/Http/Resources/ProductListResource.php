@@ -26,6 +26,7 @@ class ProductListResource extends JsonResource
             'user' => [
                 'id'=>$this->user->id,
                 'name'=>$this->user->name,
+                'store_name' =>$this->user->vendor->store_name,
             ],
             'department' => [
                 'id'=>$this->department->id,

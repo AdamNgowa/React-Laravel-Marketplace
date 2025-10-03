@@ -22,7 +22,10 @@ function ProductItem({ product }: { product: Product }) {
 
         <p className="text-xs sm:text-sm text-white mt-1">
           by{" "}
-          <Link href="/" className="hover:underline font-medium">
+          <Link
+            href={route("vendor.profile", product.user.store_name)}
+            className="hover:underline font-medium"
+          >
             {product.user.name}
           </Link>{" "}
           in{" "}
