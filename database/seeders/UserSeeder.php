@@ -35,7 +35,7 @@ class UserSeeder extends Seeder
             'user_id' => $user->id,
             'status' => VendorStatusEnum::Approved,
             'store_name' => 'Vendor Store',
-            'store_address' => fake()->address(),
+            'store_address' => '123 vendor street',
         ]);
 
         // Vendor 2
@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
             'user_id' => $user->id,
             'status' => VendorStatusEnum::Approved,
             'store_name' => 'Vendor 2 Store',
-            'store_address' => fake()->address(),
+            'store_address' => '123 vendor street',
         ]);
 
         // Admin
