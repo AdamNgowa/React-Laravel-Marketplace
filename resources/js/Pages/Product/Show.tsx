@@ -1,6 +1,6 @@
 import Carousel from "@/Components/Core/Carousel";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Product, VariationTypeOption } from "@/types";
+import { PageProps, Product, VariationTypeOption } from "@/types";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -8,12 +8,13 @@ import CurrencyFormatter from "@/Components/Core/CurrencyFormatter";
 import { arraysAreEqual } from "@/helpers";
 
 function Show({
+  appName,
   product,
   variationOptions,
-}: {
+}: PageProps<{
   product: Product;
   variationOptions: number[];
-}) {
+}>) {
   const form = useForm<{
     option_ids: Record<string, number>;
     quantity: number;
@@ -203,7 +204,19 @@ function Show({
 
   return (
     <AuthenticatedLayout>
-      <Head title={product.title} />
+      <Head>
+        <title>{product.title}</title>
+        <meta name="title" content={product.meta_title || product.meta_title} />
+        <meta name="description" content={product.meta_description} />
+        <link rel="canonical" href={route("product.show", product.slug)} />
+
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={product.meta_description} />
+
+        <meta property="og:url" content={route("product.show", product.slug)} />
+        <meta property="og:type" content="product" />
+        <meta property="og:site_name" content={appName} />
+      </Head>
 
       <div className="container mx-auto p-8">
         <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
@@ -226,7 +239,10 @@ function Show({
                 {product.user.name}
               </Link>{" "}
               in{" "}
-              <Link href="/" className="hover:underline font-medium">
+              <Link
+                href={route("product.byDepartment", product.department.slug)}
+                className="hover:underline font-medium"
+              >
                 {product.department.name}
               </Link>
             </p>

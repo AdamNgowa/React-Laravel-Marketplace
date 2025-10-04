@@ -16,6 +16,9 @@ Route::get('/', [ProductController::class,'home'])->name('dashboard');
 Route::get('/product/{product:slug}',[ProductController::class,'show'])
 ->name('product.show');
 
+Route::get('/d/{department:slug}',[ProductController::class,'byDepartment'])
+->name('product.byDepartment');
+
 Route::get('/s/{vendor:store_name}',[VendorController::class,'profile'])
 ->name('vendor.profile');
 

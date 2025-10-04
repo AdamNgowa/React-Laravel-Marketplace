@@ -9,6 +9,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use App\Enums\ProductStatusEnum;
+use Filament\Schemas\Components\Section;
 
 class ProductForm
 {
@@ -17,70 +18,79 @@ class ProductForm
         return $schema
             ->components([
                 TextInput::make('title')
-                ->live(onBlur:true)
-                ->required()
-                ->afterStateUpdated(function (string $operation, $state, callable $set) {
-                    $set('slug', Str::slug($state));
-                }
-            ),
-            TextInput::make('slug')
-             ->required(),
-            Select::make('department_id')
-             ->relationship('department', 'name')
-             ->label(__('Department'))
-             ->preload()
-             ->searchable()
-             ->required()
-             ->reactive()
-             ->afterStateUpdated(function (callable $set){
-                    $set('category_id', null);
-             
-             }),
-            Select::make('category_id')
-                ->relationship(
-                name:'category',
-                titleAttribute: 'name',
-                modifyQueryUsing:function(Builder $query,callable $get) {
-                    $departmentId = $get('department_id');
-                    if ($departmentId) {
-                        $query->where('department_id',$departmentId); //Filter categories based on d
-                    }
-                }
-                )
-                ->label(__('Category'))
-                ->preload()
-                ->searchable()
-                ->required(),
-                RichEditor::make('description')
-        ->required()
-        ->toolbarButtons([
-            // 'blockQuote',
-            'bold',
-            'bulletList',
-            'h2',
-            'h3',
-            'italic',
-            'link',
-            'orderedList',
-            'redo',
-            'strike',
-            'underline',
-            'undo',
-            'table',
+                    ->live(onBlur: true)
+                    ->required()
+                    ->afterStateUpdated(function (string $operation, $state, callable $set) {
+                        $set('slug', Str::slug($state));
+                    }),
 
-        ])
-        ->columnSpan(2),
-        TextInput::make('price')
-        ->numeric()
-        ->required(),
-        TextInput::make('quantity')
-        ->integer(),
-        Select::make('status')
-        ->options(ProductStatusEnum::labels())
-        ->default(ProductStatusEnum::Draft->value)
-        ->required(),
-        ],
-        
-        );
+                TextInput::make('slug')
+                    ->required(),
+
+                Select::make('department_id')
+                    ->relationship('department', 'name')
+                    ->label(__('Department'))
+                    ->preload()
+                    ->searchable()
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(function (callable $set) {
+                        $set('category_id', null);
+                    }),
+
+                Select::make('category_id')
+                    ->relationship(
+                        name: 'category',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: function (Builder $query, callable $get) {
+                            $departmentId = $get('department_id');
+                            if ($departmentId) {
+                                $query->where('department_id', $departmentId);
+                            }
+                        }
+                    )
+                    ->label(__('Category'))
+                    ->preload()
+                    ->searchable()
+                    ->required(),
+
+                RichEditor::make('description')
+                    ->required()
+                    ->toolbarButtons([
+                        'bold',
+                        'bulletList',
+                        'h2',
+                        'h3',
+                        'italic',
+                        'link',
+                        'orderedList',
+                        'redo',
+                        'strike',
+                        'underline',
+                        'undo',
+                        'table',
+                    ])
+                    ->columnSpan(2),
+
+                TextInput::make('price')
+                    ->numeric()
+                    ->required(),
+
+                TextInput::make('quantity')
+                    ->integer(),
+
+                Select::make('status')
+                    ->options(ProductStatusEnum::labels())
+                    ->default(ProductStatusEnum::Draft->value)
+                    ->required(),
+
+                //SEO
+                Section::make('SEO')
+                    ->collapsible()
+                    ->schema([
+                        TextInput::make('meta_title'),
+                        TextInput::make('meta_description'),
+                    ]),
+            ]);
     }
 }

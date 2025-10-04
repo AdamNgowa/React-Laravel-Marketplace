@@ -29,7 +29,10 @@ function ProductItem({ product }: { product: Product }) {
             {product.user.name}
           </Link>{" "}
           in{" "}
-          <Link href="/" className="hover:underline font-medium">
+          <Link
+            href={route("product.byDepartment", product.department.slug)}
+            className="hover:underline font-medium"
+          >
             {product.department.name}
           </Link>
         </p>
