@@ -35,7 +35,7 @@ class VendorController extends Controller
 
     }
 
-   public function store(Request $request)
+  public function store(Request $request)
 {
     $user = $request->user();
 
@@ -53,22 +53,20 @@ class VendorController extends Controller
     $vendor = Vendor::updateOrCreate(
         ['user_id' => $user->id],
         [
-            'status' => VendorStatusEnum::Approved->value,
+            'status' => VendorStatusEnum::Approved->value, // change to Pending if you want manual approval
             'store_name' => $validated['store_name'],
             'store_address' => $validated['store_address'] ?? null,
         ]
     );
 
-    if (! $user->hasRole(RolesEnum::Vendor)) {
-        $user->assignRole(RolesEnum::Vendor);
+    // Assign Vendor role if not already
+    if (! $user->hasRole(RolesEnum::Vendor->value)) {
+        $user->assignRole(RolesEnum::Vendor->value);
     }
 
-    return redirect()
-    ->back()
-    ->with('success', 'Vendor profile saved successfully.');
-
-
+    return back()->with('success', 'Vendor profile saved successfully.');
 }
+
 
 
 }
