@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
     {
         // Admin only
         User::factory()->create([
-            'name' => 'Admin',
+            'name' => 'Adam',
             'email' => 'adamngowa3@gmail.com',
             'password' => Hash::make('12345678'),
         ])->assignRole(RolesEnum::Admin->value);
