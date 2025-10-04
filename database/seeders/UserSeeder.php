@@ -14,11 +14,13 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Admin only
-        User::factory()->create([
-            'name' => 'Adam',
-            'email' => 'adamngowa3@gmail.com',
-            'password' => Hash::make('12345678'),
-        ])->assignRole(RolesEnum::Admin->value);
+        // Create only the Admin user
+        User::updateOrCreate(
+            ['email' => 'adamngowa3@gmail.com'], // prevent duplicates if seeded twice
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('12345678'),
+            ]
+        )->assignRole(RolesEnum::Admin->value);
     }
 }
