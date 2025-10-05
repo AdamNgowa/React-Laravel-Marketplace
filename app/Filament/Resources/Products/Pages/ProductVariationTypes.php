@@ -57,6 +57,7 @@ class ProductVariationTypes extends EditRecord
                         ->appendFiles()
                         ->preserveFilenames()
                         ->columnSpan(3)
+                        ->dehydrated(false)
                     ])
                     ->columnSpan(2)
                 ])
