@@ -3,7 +3,6 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps, Product, VariationTypeOption } from "@/types";
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react";
 import { useEffect, useMemo, useState } from "react";
-
 import CurrencyFormatter from "@/Components/Core/CurrencyFormatter";
 import { arraysAreEqual } from "@/helpers";
 
@@ -26,7 +25,6 @@ function Show({
   });
 
   const { url } = usePage();
-
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, VariationTypeOption>
   >({});
@@ -113,32 +111,31 @@ function Show({
     form.post(route("cart.store", product.id), {
       preserveScroll: true,
       preserveState: true,
-      onError: (err) => {
-        console.log(err);
-      },
     });
   };
 
   const renderProductVariationTypes = () => {
-    return product.variationTypes.map((type, i) => (
-      <div key={type.id}>
-        <b>{type.name}</b>
+    return product.variationTypes.map((type) => (
+      <div key={type.id} className="mt-4">
+        <b className="block mb-2 text-sm sm:text-base">{type.name}</b>
+
         {type.type === "Image" && (
-          <div className="flex gap-2 mb-4 w-96">
+          <div className="flex flex-wrap gap-3 mb-4">
             {type.options.map((option) => (
               <div
-                onClick={() => chooseOption(type.id, option)}
                 key={option.id}
+                onClick={() => chooseOption(type.id, option)}
+                className="cursor-pointer"
               >
-                {option.images && (
+                {option.images?.[0] && (
                   <img
                     src={option.images[0].url}
-                    alt=""
+                    alt={option.name}
                     className={
-                      "p-1 rounded cursor-pointer transition" +
+                      "w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border-2 transition-all duration-200 " +
                       (selectedOptions[type.id]?.id === option.id
-                        ? "bg-primary/10 ring-4 ring-primary"
-                        : "ring-1 ring-gray-200")
+                        ? "border-primary ring-2 ring-primary"
+                        : "border-gray-300 hover:border-primary/50")
                     }
                   />
                 )}
@@ -146,8 +143,9 @@ function Show({
             ))}
           </div>
         )}
+
         {type.type === "Radio" && (
-          <div className="flex gap-3 mb-4">
+          <div className="flex flex-wrap gap-3 mb-4">
             {type.options.map((option) => (
               <label
                 key={option.id}
@@ -161,7 +159,7 @@ function Show({
                   name={"variation_type_" + type.id}
                   className="radio radio-primary"
                 />
-                <span className="px-2">{option.name}</span>
+                <span className="text-sm sm:text-base">{option.name}</span>
               </label>
             ))}
           </div>
@@ -169,56 +167,12 @@ function Show({
       </div>
     ));
   };
-  const renderAddToCartButton = () => {
-    return (
-      <div className="flex gap-4 mb-8">
-        {" "}
-        <select
-          value={form.data.quantity}
-          onChange={onQuantityChange}
-          className="select select-bordered w-full"
-        >
-          {Array.from({ length: Math.min(10, computedProduct.quantity) }).map(
-            (el, i) => (
-              <option value={i + 1} key={i + 1}>
-                Quantity: {i + 1}
-              </option>
-            )
-          )}
-        </select>{" "}
-        <button onClick={addToCart} className="btn btn-primary">
-          Add To Cart
-        </button>
-      </div>
-    );
-  };
-
-  useEffect(() => {
-    const idsMap = Object.fromEntries(
-      Object.entries(selectedOptions).map(
-        ([typeId, option]: [string, VariationTypeOption]) => [typeId, option.id]
-      )
-    );
-    form.setData("option_ids", idsMap);
-  }, [selectedOptions]);
 
   return (
     <AuthenticatedLayout>
-      <Head>
-        <title>{product.title}</title>
-        <meta name="title" content={product.meta_title || product.meta_title} />
-        <meta name="description" content={product.meta_description} />
-        <link rel="canonical" href={route("product.show", product.slug)} />
+      <Head title={product.title} />
 
-        <meta property="og:title" content={product.title} />
-        <meta property="og:description" content={product.meta_description} />
-
-        <meta property="og:url" content={route("product.show", product.slug)} />
-        <meta property="og:type" content="product" />
-        <meta property="og:site_name" content={appName} />
-      </Head>
-
-      <div className="container mx-auto p-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6">
         <div className="grid gap-8 grid-cols-1 lg:grid-cols-12">
           {/* Left Column: Carousel */}
           <div className="lg:col-span-6">
@@ -226,9 +180,8 @@ function Show({
           </div>
 
           {/* Right Column: Product Details */}
-          <div className="lg:col-span-6 flex flex-col gap-6">
-            {/* Title */}
-            <h1 className="text-2xl font-bold">{product.title}</h1>
+          <div className="lg:col-span-6 flex flex-col gap-5 sm:gap-6">
+            <h1 className="text-xl sm:text-2xl font-bold">{product.title}</h1>
 
             <p className="text-xs sm:text-sm text-white mt-1">
               by{" "}
@@ -247,30 +200,48 @@ function Show({
               </Link>
             </p>
 
-            {/* Price */}
-            <div className="text-3xl font-semibold">
+            <div className="text-2xl sm:text-3xl font-semibold">
               <CurrencyFormatter amount={computedProduct.price} />
             </div>
 
-            {/* Variations */}
             {renderProductVariationTypes()}
 
-            {/* Stock Warning */}
-            {computedProduct.quantity !== undefined &&
-              computedProduct.quantity < 10 && (
-                <div className="text-error my-2">
-                  <span>Only {computedProduct.quantity} left</span>
-                </div>
-              )}
+            {computedProduct.quantity < 10 && (
+              <div className="text-error my-1 sm:my-2 text-sm">
+                Only {computedProduct.quantity} left in stock!
+              </div>
+            )}
 
-            {/* Add to Cart Button */}
-            {renderAddToCartButton()}
+            {/* Quantity + Add to Cart */}
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6">
+              <select
+                value={form.data.quantity}
+                onChange={onQuantityChange}
+                className="select select-bordered w-full sm:w-auto"
+              >
+                {Array.from({
+                  length: Math.min(10, computedProduct.quantity),
+                }).map((_, i) => (
+                  <option value={i + 1} key={i + 1}>
+                    Quantity: {i + 1}
+                  </option>
+                ))}
+              </select>
 
-            {/* Description */}
+              <button
+                onClick={addToCart}
+                className="btn btn-primary w-full sm:w-auto"
+              >
+                Add To Cart
+              </button>
+            </div>
+
             <div>
-              <h2 className="text-xl font-bold mt-6 mb-2">About the Item</h2>
+              <h2 className="text-lg sm:text-xl font-bold mt-4 mb-2">
+                About the Item
+              </h2>
               <div
-                className="wysiwyg-output prose max-w-none"
+                className="wysiwyg-output prose max-w-none text-sm sm:text-base"
                 dangerouslySetInnerHTML={{ __html: product.description }}
               />
             </div>
