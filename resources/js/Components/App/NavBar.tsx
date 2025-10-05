@@ -17,6 +17,7 @@ function NavBar() {
   const searchForm = useForm<{ keyword: string }>({
     keyword: keyword || "",
   });
+
   const { url } = usePage();
 
   const onSubmit: FormEventHandler = (e) => {
@@ -52,7 +53,7 @@ function NavBar() {
           </div>
         </div>
 
-        {/* Center: Search Bar (hidden on very small screens) */}
+        {/* Center: Search Bar */}
         <div className="hidden sm:flex flex-1 justify-center">
           <form
             onSubmit={onSubmit}
@@ -76,32 +77,18 @@ function NavBar() {
 
           {user ? (
             <div className="dropdown dropdown-end">
-              <div
+              <button
                 tabIndex={0}
-                role="button"
-                className="btn btn-ghost btn-circle avatar"
+                className="btn btn-primary btn-sm normal-case"
               >
-                <div className="w-10 rounded-full">
-                  <img
-                    alt={user.name}
-                    src={
-                      user.profile_photo_url ??
-                      "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                    }
-                  />
-                </div>
-              </div>
+                {user.name}
+              </button>
               <ul
                 tabIndex={0}
                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-20 mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <Link
-                    href={route("profile.update")}
-                    className="justify-between"
-                  >
-                    Profile
-                  </Link>
+                  <Link href={route("profile.update")}>Profile</Link>
                 </li>
                 <li>
                   <Link href={route("logout")} as="button" method="post">
@@ -140,13 +127,11 @@ function NavBar() {
 
       {/* Department Menu */}
       <div
-        className={`navbar bg-base-100 border-t transition-all duration-300 ${
-          mobileMenuOpen
-            ? "max-h-96 py-2"
-            : "max-h-0 overflow-hidden lg:max-h-none lg:py-0"
+        className={`overflow-hidden bg-base-100 border-t transition-all duration-300 lg:overflow-visible lg:max-h-none lg:border-t-0 ${
+          mobileMenuOpen ? "max-h-96 py-2" : "max-h-0 py-0"
         }`}
       >
-        <div className="navbar-center w-full flex justify-center">
+        <div className="flex justify-center">
           <ul className="menu menu-horizontal flex-col lg:flex-row px-1 gap-1 lg:gap-2 text-center w-full lg:w-auto">
             {departments.map((department) => (
               <li key={department.id}>
