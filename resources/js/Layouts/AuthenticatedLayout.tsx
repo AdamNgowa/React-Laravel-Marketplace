@@ -26,43 +26,47 @@ export default function AuthenticatedLayout({
   useEffect(() => {
     if (!props.success.message) return;
     const newMessage = { ...props.success, id: props.success.time };
-    //Add new messages to the list
+
     setSuccessMessages((prevMessages) => [newMessage, ...prevMessages]);
 
-    //Set a timeout for this specific message
     const timeOutId = setTimeout(() => {
       setSuccessMessages((prevMessages) =>
         prevMessages.filter((msg) => msg.id !== newMessage.id)
       );
-      //Clear timeouts from refs after execution
       delete timeOutRefs.current[newMessage.id];
     }, 5000);
 
-    //Store timeout ID in the ref
     timeOutRefs.current[newMessage.id] = timeOutId;
   }, [props.success]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
       <NavBar />
+
       {props.error && (
-        <div className="container mx-auto px-8 mt-8 text-red-500">
-          <div className="alert alert-danger">{props.error}</div>
+        <div className="container mx-auto px-4 sm:px-6 mt-4 text-red-500">
+          <div className="alert alert-danger text-sm sm:text-base">
+            {props.error}
+          </div>
         </div>
       )}
 
       {successMessages.length > 0 && (
-        <div className="toast toast-top toast-end z-[1000] mt-16">
+        <div className="toast toast-top right-2 left-2 sm:left-auto sm:right-4 z-[1000] mt-16 sm:mt-20">
           {successMessages.map((msg) => (
-            <div className="alert alert-success" key={msg.id}>
-              {" "}
-              <span>{msg.message}</span>{" "}
+            <div
+              className="alert alert-success text-sm sm:text-base shadow-lg"
+              key={msg.id}
+            >
+              <span>{msg.message}</span>
             </div>
           ))}
         </div>
       )}
 
-      <main>{children}</main>
+      <main className="flex-1 container mx-auto px-4 sm:px-6 py-6">
+        {children}
+      </main>
     </div>
   );
 }
