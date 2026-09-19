@@ -151,41 +151,41 @@ class ProductVariations extends EditRecord
         $formattedData = [];
         foreach ($data['variations'] as $option) {
             $variationTypeOptionIds = [];
-            foreach ($this->record->variationTypes as $i => $variationType) {
-               $variationTypeOptionIds[] = $option['variation_type_' . ($variationType->id)]['id'];
+            foreach ($this->record->variationTypes as $variationType) {
+                $key = 'variation_type_' . $variationType->id;
+                $variationTypeOptionIds[] = $option[$key]['id'] ?? null;
             }
-            $quantity = $option['quantity'];
-            $price = $option['price'];
 
-            $formattedData[] =[
-                'id' => $option['id'],
+            $formattedData[] = [
+                'id' => $option['id'] ?? null,
                 'variation_type_option_ids' => $variationTypeOptionIds,
-                'quantity' => $quantity,
-                'price' => $price
+                'quantity' => $option['quantity'] ?? null,
+                'price' => $option['price'] ?? null,
             ];
         }
         $data['variations'] = $formattedData;
 
-        return $data; 
-    }   
+        return $data;
+    }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $variations = $data['variations'];
+        $variations = $data['variations'] ?? [];
         unset($data['variations']);
 
-        $variations = collect($variations)->map(function ($variation){
+        $variations = collect($variations)->map(function ($variation) {
             return [
-                'id' => $variation['id'] ,
-                'variation_type_option_ids' =>json_encode($variation['variation_type_option_ids']),
-                'quantity' => $variation['quantity'],
-                'price' => $variation['price'],
+                'id' => $variation['id'] ?? null,
+                'variation_type_option_ids' => json_encode($variation['variation_type_option_ids'] ?? []),
+                'quantity' => $variation['quantity'] ?? null,
+                'price' => $variation['price'] ?? null,
             ];
         })->toArray();
-        
+
         $record->update($data);
-        
-        $record->variations()->upsert($variations,['id'],['variation_type_option_ids','quantity','price']);
+
+        $record->variations()->upsert($variations, ['id'], ['variation_type_option_ids', 'quantity', 'price']);
+
         return $record;
     }
 

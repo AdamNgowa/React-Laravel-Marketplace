@@ -164,6 +164,30 @@ function Show({
             ))}
           </div>
         )}
+
+        {type.type === "Select" && (
+          <div className="mb-4">
+            <select
+              value={selectedOptions[type.id]?.id ?? type.options[0]?.id ?? ""}
+              onChange={(event) => {
+                const selected = type.options.find(
+                  (option) => option.id.toString() === event.target.value,
+                );
+
+                if (selected) {
+                  chooseOption(type.id, selected);
+                }
+              }}
+              className="w-full max-w-xs rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+            >
+              {type.options.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
     ));
   };
@@ -183,18 +207,18 @@ function Show({
           <div className="lg:col-span-6 flex flex-col gap-5 sm:gap-6">
             <h1 className="text-xl sm:text-2xl font-bold">{product.title}</h1>
 
-            <p className="text-xs sm:text-sm text-white mt-1">
+            <p className="mt-1 text-xs text-slate-600 sm:text-sm">
               by{" "}
               <Link
                 href={route("vendor.profile", product.user.store_name)}
-                className="hover:underline font-medium"
+                className="font-medium text-slate-800 hover:underline"
               >
                 {product.user.name}
               </Link>{" "}
               in{" "}
               <Link
                 href={route("product.byDepartment", product.department.slug)}
-                className="hover:underline font-medium"
+                className="font-medium text-slate-800 hover:underline"
               >
                 {product.department.name}
               </Link>
