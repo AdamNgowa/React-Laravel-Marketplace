@@ -23,7 +23,7 @@ function Success({ orders }: PageProps<{ orders: Order[] }>) {
         {orders.map((order) => (
           <div
             key={order.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6"
+            className="mb-6 rounded-lg border border-slate-200 bg-white p-6 shadow-sm"
           >
             <h3 className="text-2xl font-bold mb-4">Order Summary</h3>
 
@@ -81,11 +81,17 @@ function Success({ orders }: PageProps<{ orders: Order[] }>) {
             </div>
 
             {/* Actions */}
-            <div className="flex justify-between mt-6">
-              <Link href="#" className="btn btn-primary">
+            <div className="mt-6 flex justify-between gap-3">
+              <Link
+                href="#"
+                className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+              >
                 View Order Details
               </Link>
-              <Link href={route("dashboard")} className="btn">
+              <Link
+                href={route("dashboard")}
+                className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              >
                 Back To Home
               </Link>
             </div>

@@ -27,19 +27,17 @@ function Index({
         <meta property="og:site_name" content={appName} />
       </Head>
       <div className="container mx-auto">
-        <div className="hero bg-base-200 min-h-[120px]">
-          <div className="hero-content text-center">
-            <div className="max-w-lg">
-              <h1 className="text-5xl font-bold">{department.name}</h1>
-            </div>
-          </div>
+        <div className="rounded-xl bg-slate-200 px-6 py-10 text-center shadow-sm">
+          <h1 className="text-3xl font-bold text-slate-900 sm:text-5xl">
+            {department.name}
+          </h1>
         </div>
         {products.data.length === 0 && (
-          <div className={" py-16 px-18 text-center text-gray-300 text-3xl "}>
+          <div className="py-16 px-6 text-center text-2xl text-slate-400">
             No Products found
           </div>
         )}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 p-8">
+        <div className="mt-6 grid grid-cols-1 gap-8 p-2 md:grid-cols-2 lg:grid-cols-3">
           {products.data.map((product) => (
             <ProductItem product={product} key={product.id} />
           ))}{" "}

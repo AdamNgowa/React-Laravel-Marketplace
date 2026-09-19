@@ -11,16 +11,20 @@ function Profile({
     <AuthenticatedLayout>
       <Head title={vendor.store_name + "Profile Page"} />
       <div
-        className="hero min-h-[320px]"
+        className="relative min-h-[320px] overflow-hidden rounded-xl bg-slate-800"
         style={{
           backgroundImage:
-            "url(https://img.daisyui.com/images/stock/photo-1507358522600-9f71e620c44e.webp)",
+            "url(https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
-        <div className="hero-overlay bg-opacity-60"></div>
-        <div className="hero-content text-neutral-content text-center">
-          <div className="max-w-md">
-            <h1 className="mb-5 text-5xl font-bold">{vendor.store_name}</h1>
+        <div className="absolute inset-0 bg-slate-900/60" />
+        <div className="relative flex min-h-[320px] items-center justify-center text-center text-white">
+          <div className="max-w-md px-6">
+            <h1 className="text-4xl font-bold sm:text-5xl">
+              {vendor.store_name}
+            </h1>
           </div>
         </div>
       </div>

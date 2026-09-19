@@ -13,7 +13,7 @@ export default forwardRef(function TextInput(
     isFocused = false,
     ...props
   }: InputHTMLAttributes<HTMLInputElement> & { isFocused?: boolean },
-  ref
+  ref,
 ) {
   const localRef = useRef<HTMLInputElement>(null);
 
@@ -31,7 +31,10 @@ export default forwardRef(function TextInput(
     <input
       {...props}
       type={type}
-      className={"input input-bordered " + className}
+      className={
+        "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200 " +
+        className
+      }
       ref={localRef}
     />
   );

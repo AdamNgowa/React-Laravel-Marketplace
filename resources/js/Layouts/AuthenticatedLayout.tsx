@@ -17,7 +17,7 @@ export default function AuthenticatedLayout({
 
   const [successMessages, setSuccessMessages] = useState<any[]>([]);
   const timeOutRefs = useRef<{ [key: number]: ReturnType<typeof setTimeout> }>(
-    []
+    [],
   );
 
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -31,7 +31,7 @@ export default function AuthenticatedLayout({
 
     const timeOutId = setTimeout(() => {
       setSuccessMessages((prevMessages) =>
-        prevMessages.filter((msg) => msg.id !== newMessage.id)
+        prevMessages.filter((msg) => msg.id !== newMessage.id),
       );
       delete timeOutRefs.current[newMessage.id];
     }, 5000);
@@ -40,31 +40,33 @@ export default function AuthenticatedLayout({
   }, [props.success]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col">
       <NavBar />
 
       {props.error && (
-        <div className="container mx-auto px-4 sm:px-6 mt-4 text-red-500">
-          <div className="alert alert-danger text-sm sm:text-base">
+        <div className="container mx-auto mt-4 px-4 sm:px-6">
+          <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 sm:text-base">
             {props.error}
           </div>
         </div>
       )}
 
       {successMessages.length > 0 && (
-        <div className="toast toast-top right-2 left-2 sm:left-auto sm:right-4 z-[1000] mt-16 sm:mt-20">
-          {successMessages.map((msg) => (
-            <div
-              className="alert alert-success text-sm sm:text-base shadow-lg"
-              key={msg.id}
-            >
-              <span>{msg.message}</span>
-            </div>
-          ))}
+        <div className="fixed left-2 right-2 top-20 z-[1000] sm:left-auto sm:right-4">
+          <div className="space-y-2">
+            {successMessages.map((msg) => (
+              <div
+                className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-lg sm:text-base"
+                key={msg.id}
+              >
+                <span>{msg.message}</span>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      <main className="flex-1 container mx-auto px-4 sm:px-6 py-6">
+      <main className="container mx-auto flex-1 px-4 py-6 sm:px-6">
         {children}
       </main>
     </div>

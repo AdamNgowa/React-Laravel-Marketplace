@@ -1,4 +1,3 @@
-import { base } from "daisyui/imports";
 import defaultTheme from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
@@ -12,11 +11,16 @@ export default {
 
   theme: {
     extend: {
+      colors: {
+        primary: "#111827",
+        secondary: "#f97316",
+        accent: "#22c55e",
+      },
       fontFamily: {
         sans: ["Figtree", ...defaultTheme.fontFamily.sans],
       },
     },
   },
 
-  plugins: [require("daisyui")],
+  plugins: [],
 };

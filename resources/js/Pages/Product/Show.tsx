@@ -64,21 +64,21 @@ function Show({
       chooseOption(
         type.id,
         type.options.find((op) => op.id == selectedOptionId) || type.options[0],
-        false
+        false,
       );
     }
   }, []);
 
   const getOptionIdsMap = (newOptions: object) => {
     return Object.fromEntries(
-      Object.entries(newOptions).map(([a, b]) => [a, b.id])
+      Object.entries(newOptions).map(([a, b]) => [a, b.id]),
     );
   };
 
   const chooseOption = (
     typeId: number,
     option: VariationTypeOption,
-    updateRouter: boolean = true
+    updateRouter: boolean = true,
   ) => {
     setSelectedOptions((prevSelectedOptions) => {
       const newOptions = {
@@ -95,7 +95,7 @@ function Show({
           {
             preserveScroll: true,
             preserveState: true,
-          }
+          },
         );
       }
 
@@ -157,7 +157,7 @@ function Show({
                   value={option.id}
                   checked={selectedOptions[type.id]?.id === option.id}
                   name={"variation_type_" + type.id}
-                  className="radio radio-primary"
+                  className="h-4 w-4 accent-slate-900"
                 />
                 <span className="text-sm sm:text-base">{option.name}</span>
               </label>
@@ -207,7 +207,7 @@ function Show({
             {renderProductVariationTypes()}
 
             {computedProduct.quantity < 10 && (
-              <div className="text-error my-1 sm:my-2 text-sm">
+              <div className="my-1 text-sm text-red-600 sm:my-2">
                 Only {computedProduct.quantity} left in stock!
               </div>
             )}
@@ -217,7 +217,7 @@ function Show({
               <select
                 value={form.data.quantity}
                 onChange={onQuantityChange}
-                className="select select-bordered w-full sm:w-auto"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500 sm:w-auto"
               >
                 {Array.from({
                   length: Math.min(10, computedProduct.quantity),
@@ -230,7 +230,7 @@ function Show({
 
               <button
                 onClick={addToCart}
-                className="btn btn-primary w-full sm:w-auto"
+                className="w-full rounded-md bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-slate-700 sm:w-auto"
               >
                 Add To Cart
               </button>

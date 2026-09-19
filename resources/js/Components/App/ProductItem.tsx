@@ -4,49 +4,48 @@ import CurrencyFormatter from "../Core/CurrencyFormatter";
 
 function ProductItem({ product }: { product: Product }) {
   return (
-    <div className="card bg-base-100 shadow-md hover:shadow-lg transition w-full mx-auto">
+    <div className="w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:shadow-md">
       <Link href={route("product.show", product.slug)}>
-        <figure className="aspect-square overflow-hidden">
+        <div className="aspect-square overflow-hidden bg-slate-100">
           <img
             src={product.image}
             alt={product.title}
-            className="h-full w-full object-cover transform hover:scale-105 transition duration-300"
+            className="h-full w-full object-cover transition duration-300 hover:scale-105"
           />
-        </figure>
+        </div>
       </Link>
 
-      <div className="card-body p-4 sm:p-6">
-        <h2 className="text-base sm:text-lg font-semibold line-clamp-2">
+      <div className="space-y-3 p-4 sm:p-5">
+        <h2 className="line-clamp-2 text-base font-semibold text-slate-900 sm:text-lg">
           {product.title}
         </h2>
 
-        <p className="text-xs sm:text-sm text-white mt-1">
+        <p className="text-xs text-slate-600 sm:text-sm">
           by{" "}
           <Link
             href={route("vendor.profile", product.user.store_name)}
-            className="hover:underline font-medium"
+            className="font-medium text-slate-800 hover:underline"
           >
             {product.user.name}
           </Link>{" "}
           in{" "}
           <Link
             href={route("product.byDepartment", product.department.slug)}
-            className="hover:underline font-medium"
+            className="font-medium text-slate-800 hover:underline"
           >
             {product.department.name}
           </Link>
         </p>
 
-        <div className="card-actions justify-between items-center mt-4">
-          {/* Instead of posting directly, send user to product page */}
+        <div className="flex items-center justify-between gap-3 pt-2">
           <Link
             href={route("product.show", product.slug)}
-            className="btn btn-primary btn-xs sm:btn-sm md:btn-md"
+            className="inline-flex items-center justify-center rounded-md bg-slate-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-slate-700 sm:text-sm"
           >
             Choose Options
           </Link>
 
-          <span className="text-lg sm:text-xl font-bold">
+          <span className="text-lg font-bold text-slate-900 sm:text-xl">
             <CurrencyFormatter amount={product.price} />
           </span>
         </div>

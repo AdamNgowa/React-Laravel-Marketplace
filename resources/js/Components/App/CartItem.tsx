@@ -28,7 +28,7 @@ function CartItem({ item }: { item: CartItemType }) {
         onError: (errors) => {
           setError(Object.values(errors)[0]);
         },
-      }
+      },
     );
   };
 
@@ -80,10 +80,15 @@ function CartItem({ item }: { item: CartItemType }) {
                   className="input-sm w-16"
                 />
               </div>
-              <button onClick={onDeleteClick} className="btn btn-sm btn-ghost">
+              <button
+                onClick={onDeleteClick}
+                className="rounded-md px-2 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100"
+              >
                 Delete
               </button>
-              <button className="btn btn-sm btn-ghost">Save For Later</button>
+              <button className="rounded-md px-2 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100">
+                Save For Later
+              </button>
             </div>
 
             <div className="font-bold text-base sm:text-lg">

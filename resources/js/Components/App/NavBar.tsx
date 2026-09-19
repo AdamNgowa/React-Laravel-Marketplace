@@ -30,120 +30,127 @@ function NavBar() {
 
   return (
     <>
-      {/* Top Navbar */}
-      <div className="navbar bg-base-100 shadow-sm sticky top-0 z-50">
-        {/* Left: Brand + Mobile Menu Button */}
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
+      <div className="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6">
+          <div className="flex flex-1 items-center gap-2">
             <button
-              className="btn btn-ghost lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700 lg:hidden"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? (
-                <XMarkIcon className="w-5 h-5" />
+                <XMarkIcon className="h-5 w-5" />
               ) : (
-                <Bars3Icon className="w-5 h-5" />
+                <Bars3Icon className="h-5 w-5" />
               )}
             </button>
 
-            <Link href="/" className="btn btn-ghost text-xl">
+            <Link href="/" className="text-xl font-semibold text-slate-900">
               LaraStore
             </Link>
           </div>
+
+          <div className="hidden flex-1 justify-center sm:flex">
+            <form
+              onSubmit={onSubmit}
+              className="flex w-full max-w-md md:max-w-lg"
+            >
+              <input
+                value={searchForm.data.keyword}
+                onChange={(e) => searchForm.setData("keyword", e.target.value)}
+                className="w-full rounded-l-md border border-r-0 border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
+                placeholder="Search"
+              />
+              <button
+                type="submit"
+                className="rounded-r-md border border-slate-300 bg-slate-100 px-3 text-slate-700 transition hover:bg-slate-200"
+              >
+                <MagnifyingGlassIcon className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <MiniCartDropdown />
+
+            {user ? (
+              <div className="relative">
+                <button className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-700">
+                  {user.name}
+                </button>
+                <div className="absolute right-0 mt-2 w-52 rounded-md border border-slate-200 bg-white p-2 shadow-lg">
+                  <Link
+                    href={route("profile.update")}
+                    className="block rounded px-3 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    href={route("logout")}
+                    as="button"
+                    method="post"
+                    className="block w-full rounded px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-100"
+                  >
+                    Logout
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="hidden gap-2 sm:flex">
+                <Link
+                  href={route("login")}
+                  className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  Login
+                </Link>
+                <Link
+                  href={route("register")}
+                  className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Center: Search Bar */}
-        <div className="hidden sm:flex flex-1 justify-center">
-          <form
-            onSubmit={onSubmit}
-            className="join w-full max-w-md md:max-w-lg"
-          >
+        <div className="sm:hidden border-t border-slate-200 bg-white px-3 py-2">
+          <form onSubmit={onSubmit} className="flex w-full">
             <input
               value={searchForm.data.keyword}
               onChange={(e) => searchForm.setData("keyword", e.target.value)}
-              className="input input-bordered join-item w-full"
+              className="w-full rounded-l-md border border-r-0 border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-slate-500"
               placeholder="Search"
             />
-            <button type="submit" className="btn join-item">
-              <MagnifyingGlassIcon className="w-4 h-4" />
+            <button
+              type="submit"
+              className="rounded-r-md border border-slate-300 bg-slate-100 px-3 text-slate-700 transition hover:bg-slate-200"
+            >
+              <MagnifyingGlassIcon className="h-4 w-4" />
             </button>
           </form>
         </div>
 
-        {/* Right: User & Cart */}
-        <div className="flex-none flex items-center gap-3">
-          <MiniCartDropdown />
-
-          {user ? (
-            <div className="dropdown dropdown-end">
-              <button
-                tabIndex={0}
-                className="btn btn-primary btn-sm normal-case"
-              >
-                {user.name}
-              </button>
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-20 mt-3 w-52 p-2 shadow"
-              >
-                <li>
-                  <Link href={route("profile.update")}>Profile</Link>
-                </li>
-                <li>
-                  <Link href={route("logout")} as="button" method="post">
-                    Logout
+        <div
+          className={`overflow-hidden border-t border-slate-200 bg-white transition-all duration-300 lg:overflow-visible lg:max-h-none lg:border-t-0 ${
+            mobileMenuOpen ? "max-h-96 py-2" : "max-h-0 py-0"
+          }`}
+        >
+          <div className="mx-auto max-w-7xl px-3 py-2 lg:px-6">
+            <ul className="flex flex-col gap-1 text-center lg:flex-row lg:items-center lg:justify-center lg:gap-2">
+              {departments.map((department) => (
+                <li key={department.id}>
+                  <Link
+                    href={route("product.byDepartment", department.slug)}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block rounded-md px-3 py-2 text-sm text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                  >
+                    {department.name}
                   </Link>
                 </li>
-              </ul>
-            </div>
-          ) : (
-            <div className="hidden sm:flex gap-2">
-              <Link href={route("login")} className="btn btn-ghost">
-                Login
-              </Link>
-              <Link href={route("register")} className="btn btn-primary">
-                Register
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Search bar (for mobile only) */}
-      <div className="sm:hidden bg-base-100 border-t px-3 py-2">
-        <form onSubmit={onSubmit} className="join w-full">
-          <input
-            value={searchForm.data.keyword}
-            onChange={(e) => searchForm.setData("keyword", e.target.value)}
-            className="input input-bordered join-item w-full"
-            placeholder="Search"
-          />
-          <button type="submit" className="btn join-item">
-            <MagnifyingGlassIcon className="w-4 h-4" />
-          </button>
-        </form>
-      </div>
-
-      {/* Department Menu */}
-      <div
-        className={`overflow-hidden bg-base-100 border-t transition-all duration-300 lg:overflow-visible lg:max-h-none lg:border-t-0 ${
-          mobileMenuOpen ? "max-h-96 py-2" : "max-h-0 py-0"
-        }`}
-      >
-        <div className="flex justify-center">
-          <ul className="menu menu-horizontal flex-col lg:flex-row px-1 gap-1 lg:gap-2 text-center w-full lg:w-auto">
-            {departments.map((department) => (
-              <li key={department.id}>
-                <Link
-                  href={route("product.byDepartment", department.slug)}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {department.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </>

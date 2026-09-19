@@ -8,15 +8,14 @@ function MiniCartDropdown() {
     usePage<PageProps>().props;
 
   return (
-    <div className="dropdown dropdown-end">
-      {/* Cart button */}
+    <div className="relative">
       <div
         tabIndex={0}
         role="button"
         aria-label="Cart"
-        className="btn btn-ghost btn-circle"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50"
       >
-        <div className="indicator">
+        <div className="relative">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -28,76 +27,67 @@ function MiniCartDropdown() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 
-                 2.293c-.63.63-.184 1.707.707 1.707H17m0 
-                 0a2 2 0 100 4 2 2 0 000-4m-8 
-                 2a2 2 0 11-4 0 2 2 0 014 0"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4m-8 2a2 2 0 11-4 0 2 2 0 014 0"
             />
           </svg>
-          <span className="badge badge-sm indicator-item">{totalQuantity}</span>
+          <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-slate-900 px-1 text-[10px] font-semibold text-white">
+            {totalQuantity}
+          </span>
         </div>
       </div>
 
-      {/* Dropdown content */}
-      <div
-        tabIndex={0}
-        className="card card-compact dropdown-content bg-base-100 z-[1] mt-3 w-[90vw] sm:w-[420px] md:w-[480px] shadow"
-      >
-        <div className="card-body">
-          {/* Items List */}
-          <div className="my-2 max-h-[300px] overflow-auto">
-            {miniCartItems.length === 0 && (
-              <div className="py-4 text-gray-500 text-center text-sm sm:text-base">
-                You don&apos;t have any items yet
-              </div>
-            )}
+      <div className="absolute right-0 z-[1] mt-3 w-[90vw] rounded-lg border border-slate-200 bg-white p-3 shadow-lg sm:w-[420px] md:w-[480px]">
+        <div className="space-y-3">
+          {miniCartItems.length === 0 && (
+            <div className="py-4 text-center text-sm text-slate-500 sm:text-base">
+              You don&apos;t have any items yet
+            </div>
+          )}
 
-            {miniCartItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-3 sm:gap-4 p-2 sm:p-3 border-b last:border-0"
+          {miniCartItems.map((item) => (
+            <div
+              key={item.id}
+              className="flex gap-3 border-b border-slate-200 pb-3 last:border-b-0 last:pb-0 sm:gap-4"
+            >
+              <Link
+                href={productRoute(item)}
+                className="flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16"
               >
-                <Link
-                  href={productRoute(item)}
-                  className="w-14 h-14 sm:w-16 sm:h-16 flex justify-center"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="h-full w-full object-cover rounded"
-                  />
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <h3 className="mb-1 font-semibold text-xs sm:text-sm truncate">
-                    <Link href={productRoute(item)}>{item.title}</Link>
-                  </h3>
-                  <div className="flex text-xs sm:text-sm justify-between">
-                    <div>x{item.quantity}</div>
-                    <div className="font-medium">
-                      <CurrencyFormatter amount={item.quantity * item.price} />
-                    </div>
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="h-full w-full rounded object-cover"
+                />
+              </Link>
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-xs font-semibold sm:text-sm">
+                  <Link href={productRoute(item)}>{item.title}</Link>
+                </h3>
+                <div className="mt-1 flex items-center justify-between text-xs sm:text-sm">
+                  <div>x{item.quantity}</div>
+                  <div className="font-medium text-slate-700">
+                    <CurrencyFormatter amount={item.quantity * item.price} />
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Summary & actions */}
-          <div className="mt-2 border-t pt-2">
-            <span className="text-sm sm:text-base font-bold">
-              {totalQuantity} items
-            </span>
-            <span className="text-info block text-sm sm:text-base font-medium">
-              <CurrencyFormatter amount={totalPrice} />
-            </span>
-            <div className="card-actions mt-2">
-              <Link
-                href={route("cart.index")}
-                className="btn btn-primary btn-sm sm:btn-md btn-block"
-              >
-                View cart
-              </Link>
             </div>
+          ))}
+        </div>
+
+        <div className="mt-3 border-t border-slate-200 pt-3">
+          <div className="text-sm font-semibold sm:text-base">
+            {totalQuantity} items
+          </div>
+          <div className="mt-1 text-sm font-medium text-slate-700 sm:text-base">
+            <CurrencyFormatter amount={totalPrice} />
+          </div>
+          <div className="mt-3">
+            <Link
+              href={route("cart.index")}
+              className="block w-full rounded-md bg-slate-900 px-3 py-2 text-center text-sm font-medium text-white transition hover:bg-slate-700"
+            >
+              View cart
+            </Link>
           </div>
         </div>
       </div>

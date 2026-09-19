@@ -7,8 +7,11 @@ export default function InputLabel({
   ...props
 }: LabelHTMLAttributes<HTMLLabelElement> & { value?: string }) {
   return (
-    <label {...props} className={`label` + className}>
-      <span className="label-text">{value ? value : children}</span>
+    <label
+      {...props}
+      className={"mb-1 block text-sm font-medium text-slate-700 " + className}
+    >
+      {value ? value : children}
     </label>
   );
 }

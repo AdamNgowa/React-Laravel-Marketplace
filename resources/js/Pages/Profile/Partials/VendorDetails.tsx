@@ -61,8 +61,8 @@ export default function VendorDetails({
   return (
     <section className={className}>
       {recentlySuccessful && successMessage && (
-        <div className="toast toast-top toast-end">
-          <div className="alert alert-success">
+        <div className="fixed right-4 top-20 z-[1000]">
+          <div className="rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-lg">
             <span>{successMessage}</span>
           </div>
         </div>
@@ -73,12 +73,12 @@ export default function VendorDetails({
           Vendor Details
           {user.vendor?.status && (
             <span
-              className={`badge ${
+              className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                 user.vendor.status === "pending"
-                  ? "badge-warning"
+                  ? "bg-amber-100 text-amber-700"
                   : user.vendor.status === "rejected"
-                  ? "badge-error"
-                  : "badge-success"
+                    ? "bg-red-100 text-red-700"
+                    : "bg-emerald-100 text-emerald-700"
               }`}
             >
               {user.vendor.status_label}
@@ -119,7 +119,7 @@ export default function VendorDetails({
                 <InputLabel htmlFor="store_address" value="Store Address" />
                 <textarea
                   id="store_address"
-                  className="textarea textarea-bordered w-full mt-1"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                   value={data.store_address}
                   onChange={(e) => setData("store_address", e.target.value)}
                   placeholder="Enter your store address"
