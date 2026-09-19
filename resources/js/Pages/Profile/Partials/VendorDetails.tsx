@@ -4,7 +4,7 @@ import Modal from "@/Components/Core/Modal";
 import PrimaryButton from "@/Components/Core/PrimaryButton";
 import SecondaryButton from "@/Components/Core/SecondaryButton";
 import TextInput from "@/Components/Core/TextInput";
-import { useForm, usePage } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import { FormEventHandler, useState } from "react";
 
 export default function VendorDetails({
@@ -133,21 +133,35 @@ export default function VendorDetails({
             </form>
 
             {!user.stripe_account_id ? (
-              <form
-                action={route("stripe.connect")}
-                method="post"
-                className="my-8"
-              >
-                <input type="hidden" name="_token" value={token} />
-                <PrimaryButton type="submit" className="w-full">
-                  Connect with Stripe
-                </PrimaryButton>
-              </form>
+              <div className="my-8 space-y-3">
+                <form action={route("stripe.connect")} method="post">
+                  <input type="hidden" name="_token" value={token} />
+                  <PrimaryButton type="submit" className="w-full">
+                    Connect with Stripe
+                  </PrimaryButton>
+                </form>
+
+                <Link
+                  href={route("filament.admin.pages.dashboard")}
+                  className="block w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-center text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  Go to Admin Dashboard
+                </Link>
+              </div>
             ) : (
-              <div className="flex justify-center my-6">
-                <span className="px-4 py-2 text-sm font-medium text-green-700 bg-green-100 rounded-lg">
-                  ✅ Your Stripe account is connected.
-                </span>
+              <div className="my-6 space-y-3">
+                <div className="flex justify-center">
+                  <span className="rounded-lg bg-green-100 px-4 py-2 text-sm font-medium text-green-700">
+                    ✅ Your Stripe account is connected.
+                  </span>
+                </div>
+
+                <Link
+                  href={route("filament.admin.pages.dashboard")}
+                  className="block w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-center text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  Go to Admin Dashboard
+                </Link>
               </div>
             )}
           </>
